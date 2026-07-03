@@ -8,10 +8,10 @@ on:
   workflow_call:
     inputs:
       model_id:
-        description: OpenAI model id for OpenWiki
+        description: OpenAI model id for OpenWiki (OpenWiki supports gpt-5.4-mini, gpt-5.5)
         required: false
         type: string
-        default: gpt-4o          # verify current preferred OpenAI model at pilot time
+        default: gpt-5.4-mini
       node_version:
         description: Node version
         required: false
@@ -50,7 +50,8 @@ jobs:
       - name: Run OpenWiki
         run: openwiki --update --print     # verify current update flags at pilot time
         env:
-          # OpenAI direct. Confirm exact var names against current OpenWiki docs at pilot.
+          # OpenAI direct. OPENWIKI_PROVIDER selects the provider (default is openrouter).
+          OPENWIKI_PROVIDER: openai
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENWIKI_MODEL_ID: ${{ inputs.model_id }}
 
