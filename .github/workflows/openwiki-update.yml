@@ -42,7 +42,9 @@ jobs:
         uses: actions/setup-node@v4        # verify latest major at pilot time
         with:
           node-version: ${{ inputs.node_version }}
-          cache: "npm"
+          # No dependency cache: OpenWiki is installed globally below, so there
+          # are no project deps to cache. Enabling cache:"npm" made setup-node
+          # require a root npm lockfile and hard-fail on pnpm/yarn repos.
 
       - name: Install OpenWiki
         run: npm install --global openwiki
