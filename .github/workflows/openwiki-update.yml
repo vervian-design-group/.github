@@ -17,6 +17,21 @@ on:
         required: false
         type: string
         default: "22"            # verify OpenWiki's required Node at pilot time
+      openwiki_version:
+        description: >-
+          Exact OpenWiki version to install. PINNED ON PURPOSE. OpenWiki is 0.x,
+          so any release may break consumers with no major-version signal, and
+          this workflow runs unattended on a daily cron across every repo in the
+          org. An unpinned `npm install --global openwiki` means one publish can
+          turn the whole fleet red at once, which is exactly what happened on
+          2026-07-17: 0.2.0 (published 2026-07-16 16:53 UTC) made YAML front
+          matter mandatory, and theproductproduct + vervian-api both failed on
+          their next cron with "<file> lacks YAML front matter."
+          Bump this deliberately, after adding front matter to each consumer's
+          openwiki/*.md, not by leaving it floating.
+        required: false
+        type: string
+        default: "0.1.2"
     secrets:
       OPENAI_API_KEY:
         required: true
@@ -47,7 +62,7 @@ jobs:
           # require a root npm lockfile and hard-fail on pnpm/yarn repos.
 
       - name: Install OpenWiki
-        run: npm install --global openwiki
+        run: npm install --global "openwiki@${{ inputs.openwiki_version }}"
 
       - name: Run OpenWiki
         run: openwiki --update --print     # verify current update flags at pilot time
